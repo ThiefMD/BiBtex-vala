@@ -59,16 +59,18 @@ namespace BibTex {
                             label = line.substring (curly + 1, comma - (curly + 1)).chug ().chomp ();
                             while ((line = input.read_line (null)) != null) {
                                 line = line.chomp ().chug ();
-                                int equality = throw_if_not_index (line.index_of_char ('='));
-                                string key = line.substring (0, equality).chug ().chomp ();
-                                string value = line.substring (equality + 1).chomp ().chug ();
-                                while (value.has_suffix ("}") || value.has_suffix (",") || value.has_suffix ("\"")) {
-                                    value = value.substring (0, value.length - 1);
+                                int equality = line.index_of_char ('=');
+                                if (equality != -1) {
+                                    string key = line.substring (0, equality).chug ().chomp ();
+                                    string value = line.substring (equality + 1).chomp ().chug ();
+                                    while (value.has_suffix ("}") || value.has_suffix (",") || value.has_suffix ("\"")) {
+                                        value = value.substring (0, value.length - 1);
+                                    }
+                                    while (value.has_prefix ("{") || value.has_prefix ("\"")) {
+                                        value = value.substring (1, value.length - 1);
+                                    }
+                                    entry.set (key, value);
                                 }
-                                while (value.has_prefix ("{") || value.has_prefix ("\"")) {
-                                    value = value.substring (1, value.length - 1);
-                                }
-                                entry.set (key, value);
                                 if (line.has_suffix ("}")) {
                                     break;
                                 }
@@ -91,7 +93,7 @@ namespace BibTex {
                                 equality = throw_if_not_index (line.index_of_char ('=', curly));
                                 curly = -1;
                             }
-                            label = line.substring (curly + 1, equality).chug ().chomp ();
+                            label = line.substring (curly + 1, equality - (curly + 1)).chug ().chomp ();
                             int close_brace = line.last_index_of_char ('}');
                             string value = line.substring (equality + 1, ((close_brace != -1) ? close_brace : line.length) - (equality + 1)).chug ().chomp ();
                             strings.set (label, value);
