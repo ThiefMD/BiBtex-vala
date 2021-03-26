@@ -42,7 +42,7 @@ namespace BibTex {
                     if (line.has_prefix ("@")) {
                         int curly = throw_if_not_index (line.index_of_char ('{'));
                         string type = line.substring (1, curly - 1).down ().chomp ().chug ();
-                        if (type != "string") {
+                        if (type != "string" && type != "preamble" && type != "comment") {
                             entry = new Gee.HashMap<string, string> ();
                             int comma = line.index_of_char (',', curly);
                             if (comma == -1) {
@@ -80,7 +80,7 @@ namespace BibTex {
                                 entries.set (label, entry);
                             }
                             entry = null;
-                        } else {
+                        } else if (type == "string") {
                             int equality = line.index_of_char ('=', curly);
                             if (equality == -1) {
                                 curly = 0;
