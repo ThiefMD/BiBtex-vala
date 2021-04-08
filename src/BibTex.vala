@@ -3,7 +3,7 @@ namespace BibTex {
         FORMATTING_ERROR
     }
 
-    public class Parser {
+    public class Parser : Object {
         private string bibtex_file;
         private Gee.Map<string, Gee.Map<string, string>> entries;
         public Parser (string file = "") {
