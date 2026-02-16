@@ -33,8 +33,9 @@ namespace BibTex {
 
             Gee.HashMap<string, string> entry = null;
             Gee.HashMap<string, string> strings = new Gee.HashMap<string, string> ();
+            DataInputStream? input = null;
             try {
-                var input = new DataInputStream (to_parse.read ());
+                input = new DataInputStream (to_parse.read ());
                 string line;
                 string label = "";
                 while ((line = input.read_line (null)) != null) {
@@ -105,7 +106,15 @@ namespace BibTex {
                     entries.set (label, entry);
                 }
             } catch (Error e) {
-                warning ("Could not read file: %s", e.message);
+                warning ("Could not parse %s: %s\n", to_parse.get_path (), e.message);
+            } finally {
+                if (input != null) {
+                    try {
+                        input.close ();
+                    } catch (Error e) {
+                        warning ("Could not close bibtex parse stream: %s", e.message);
+                    }
+                }
             }
 
             return true;
